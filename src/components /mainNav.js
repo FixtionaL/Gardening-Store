@@ -11,7 +11,7 @@ const MainNav = () => {
      
         <Link to="/home" className="mainH">Urban Eden</Link>
         <SearchBar/>
-          <Link to="/profile" className='navbarh'>{user? user.username:'FixtionaL'}</Link>
+          <Link to="/profile" className='navbarh'>Welcome {user? user.username:'FixtionaL'}</Link>
           <Link to="/cart" className='navbarh'>Cart</Link>
           <Link to="/wishlist" className='navbarh'>WishList</Link>
           <Link to="/" className='navbarh'>LogOut</Link>
