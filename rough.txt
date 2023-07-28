@@ -1,105 +1,95 @@
-
 import React, { useState } from "react";
-import Navbar from "./navbar";
-import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import './Feed.css';
+import { useNavigate } from "react-router-dom";
+import Navbar from './Navbar';
+import {MdFeedback} from 'react-icons/md';
 
-const Login = () => {
-  const [fields, setFields] = useState({});
-  const [errors, setErrors] = useState({});
+const Feedback = () => {
   const navigate = useNavigate();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [feedbackText, setFeedbackText] = useState("");
+  const [submitted, setSubmitted] = useState(false);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFields((prevFields) => ({ ...prevFields, [name]: value }));
-  };
+  const handleSubmit = async () => {
+    try {
+      // Replace 'YOUR_API_ENDPOINT' with your backend API endpoint to handle feedback submission
+      const apiUrl = "http://localhost:8181/api/v1/demo/send";
 
-  const submitUserRegistrationForm = (e) => {
-    e.preventDefault();
-    if (validateForm()) {
-      let updatedFields = {
-        username: "",
-        password: "",
+      // Replace 'YOUR_JWT_TOKEN' with the actual JWT token generated from your backend after authentication
+      const jwtToken =  localStorage.getItem("jwtToken");
+
+      // Configuring the headers with JWT token
+      const config = {
+        headers: {
+          Authorization: `Bearer ${jwtToken}`,
+        },
       };
-      setFields(updatedFields);
-    //   alert("Your Form has been submitted successfully.");
-      navigate("/home");
-    }
-  };
 
-  const validateForm = () => {
-    let updatedErrors = {};
-    let formIsValid = true;
+      // Sending the feedback data to the server
+      const response = await axios.post(apiUrl, {
+        name: name,
+        email: email,
+        feedback: feedbackText,
+      }, config);
 
-    if (!fields["username"]) {
-      formIsValid = false;
-      updatedErrors["username"] = "*Please enter your username.";
-    }
-
-    if (typeof fields["username"] !== "undefined") {
-      if (!fields["username"].match(/^[a-zA-Z ]*$/)) {
-        formIsValid = false;
-        updatedErrors["username"] = "*Please enter alphabet characters only.";
+      navigate("/homepage");
+      if (response.status === 201) {
+        setSubmitted(true);
       }
+    } catch (error) {
+      console.error("Error submitting feedback:", error);
     }
-
-    if (!fields["password"]) {
-      formIsValid = false;
-      updatedErrors["password"] = "*Please enter your password.";
-    }
-
-    if (typeof fields["password"] !== "undefined") {
-      if (fields["password"].length < 8) {
-        formIsValid = false;
-        updatedErrors["password"] = "*Please enter at least 8 characters.";
-      } 
-    }
-
-    setErrors(updatedErrors);
-    return formIsValid;
   };
 
   return (
     <div>
-      <Navbar />
-      <div id="main-registration-container">
-        <div id="register">
-          <h2 className="head">Login Page</h2>
-          <form
-            method="post"
-            name="userRegistrationForm"
-            onSubmit={submitUserRegistrationForm}
-          >
-            <br />
-            <label> Username ↴ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
-            <br />
-            <input
-              type="text"
-              name="username"
-              className="inputs"
-              value={fields.username || ""}
-              onChange={handleChange}
-              placeholder="Type Here"
-            />
-            <br />
-            <label>Enter Password ↴&nbsp;&nbsp;</label>
-            <br />
-            <input
-              type="password"
-              name="password"
-              className="inputs"
-              value={fields.password || ""}
-              onChange={handleChange}
-              placeholder="Enter Here"
-            />
-            <br />
-            <div className="errorMsg">{errors.password}</div>
-            <br />
-            <input type="submit" className="button" value="Login" />
-          </form>
+    <div className="imgss">
+        <Navbar/>
+    <div className="feedback-container">
+      {submitted ? (
+        <div className="feedback-submitted">
+          <h3>Thank you for your feedback!</h3>
+          <p>We value your input.</p>
         </div>
-      </div>
+      ) : (
+        <div>
+          <h2><MdFeedback></MdFeedback>FEEDBACK FORM<MdFeedback></MdFeedback></h2>
+          <div>
+            <label htmlFor="name">Name:</label>
+            <input
+              type="text11"
+              id="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </div>
+          <div>
+            <label htmlFor="email">Email:</label>
+            <input
+              type="email11"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+          <div>
+            <label htmlFor="feedback">Feedback:</label>
+            <textarea
+              id="feedback"
+              value={feedbackText}
+              onChange={(e) => setFeedbackText(e.target.value)}
+              placeholder="Enter your feedback here..."
+            />
+          </div>
+          <button onClick={handleSubmit}>Submit</button>
+        </div>
+      )}
+    </div>
+    </div>
     </div>
   );
 };
 
-export default Login;
+export default Feedback;

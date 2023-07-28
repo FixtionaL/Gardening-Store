@@ -1,10 +1,15 @@
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "./navbar";
+import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 
 const SignUp = () => {
-  const [fields, setFields] = useState({});
+  const [fields, setFields] = useState({
+    name: "",
+    // address: "",
+    email: "",
+    password: "",
+  });
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
@@ -15,16 +20,26 @@ const SignUp = () => {
 
   const submitUserRegistrationForm = (e) => {
     e.preventDefault();
+
     if (validateForm()) {
+      axios
+        .post("http://localhost:8181/api/v1/auth/register", fields)
+        .then((res) => {
+          console.log(fields);
+          // alert(res.data.user);
+          // setUserState(res.data.user);
+          navigate("/login", { replace: true });
+        });
+
       let updatedFields = {
-        username: "",
-        address: "",
-        emailid: "",
+        name: "",
+        // address: "",
+        email: "",
         password: "",
       };
-      setFields(updatedFields);
-    //   alert("Your Form has been submitted successfully.");
-      navigate("/home");
+      // setFields(updatedFields);
+      // // alert("Your Form has been submitted successfully.");
+      // navigate("/login");
     }
   };
 
@@ -32,43 +47,41 @@ const SignUp = () => {
     let updatedErrors = {};
     let formIsValid = true;
 
-    if (!fields["username"]) {
+    if (!fields["name"]) {
       formIsValid = false;
-      updatedErrors["username"] = "*Please enter your username.";
+      updatedErrors["name"] = "*Please enter your username.";
     }
 
-    if (typeof fields["username"] !== "undefined") {
-      if (!fields["username"].match(/^[a-zA-Z ]*$/)) {
+    if (typeof fields["name"] !== "undefined") {
+      if (!fields["name"].match(/^[a-zA-Z ]*$/)) {
         formIsValid = false;
-        updatedErrors["username"] = "*Please enter alphabet characters only.";
+        updatedErrors["name"] = "*Please enter alphabet characters only.";
       }
     }
 
-    if (!fields["address"]) {
+    // if (!fields["address"]) {
+    //   formIsValid = false;
+    //   updatedErrors["address"] = "*Please enter your address.";
+    // }
+
+    // if (typeof fields["address"] !== "undefined") {
+    //   if (!fields["address"].match(/^[A-Z0-9._%+-]*$/)) {
+    //     formIsValid = false;
+    //     updatedErrors["address"] =
+    //       "*Please enter alphanumeric characters only.";
+    //   }
+    // }
+
+    if (!fields["email"]) {
       formIsValid = false;
-      updatedErrors["address"] = "*Please enter your address.";
+      updatedErrors["email"] = "*Please enter your email-ID.";
     }
 
-    if (typeof fields["address"] !== "undefined") {
-      if (!fields["address"].match(/^[A-Z0-9._%+-]*$/)) {
+    if (typeof fields["email"] !== "undefined") {
+      const pattern = new RegExp(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i);
+      if (!pattern.test(fields["email"])) {
         formIsValid = false;
-        updatedErrors["address"] =
-          "*Please enter alphanumeric characters only.";
-      }
-    }
-
-    if (!fields["emailid"]) {
-      formIsValid = false;
-      updatedErrors["emailid"] = "*Please enter your email-ID.";
-    }
-
-    if (typeof fields["emailid"] !== "undefined") {
-      const pattern = new RegExp(
-        /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i
-      );
-      if (!pattern.test(fields["emailid"])) {
-        formIsValid = false;
-        updatedErrors["emailid"] = "*Please enter valid email-ID.";
+        updatedErrors["email"] = "*Please enter valid email-ID.";
       }
     }
 
@@ -96,6 +109,19 @@ const SignUp = () => {
     setErrors(updatedErrors);
     return formIsValid;
   };
+  // useEffect(() => {
+  //   if (Object.keys(errors).length === 0) {
+  //     console.log(fields);
+  //     axios
+  //       .post("http://localhost:8181/api/v1/auth/register", fields)
+  //       .then((res) => {
+  //         console.log(fields);
+  //         // alert(res.data.user);
+  //         // setUserState(res.data.user);
+  //         // navigate("/login", { replace: true });
+  //       });
+  //   }
+  // }, []);
 
   return (
     <div>
@@ -113,15 +139,15 @@ const SignUp = () => {
             <br />
             <input
               type="text"
-              name="username"
+              name="name"
               className="inputs"
-              value={fields.username || ""}
+              value={fields.name || ""}
               onChange={handleChange}
               placeholder="Type Here"
             />
             <br />
-            <div className="errorMsg">{errors.username}</div>
-            <br />
+            <div className="errorMsg">{errors.name}</div>
+            {/* <br />
             <label>Address ↴ &nbsp;&nbsp;</label>
             <br />
             <input
@@ -133,22 +159,22 @@ const SignUp = () => {
               placeholder="Type Here"
             />
             <br />
-            <div className="errorMsg">{errors.address}</div>
+            <div className="errorMsg">{errors.address}</div> */}
             <br />
             <label>Email ↴ &nbsp;&nbsp;</label>
             <br />
             <input
               type="text"
-              name="emailid"
+              name="email"
               className="inputs"
-              value={fields.emailid || ""}
+              value={fields.email || ""}
               onChange={handleChange}
               placeholder="Type Here"
             />
             <br />
-            <div className="errorMsg">{errors.emailid}</div>
+            <div className="errorMsg">{errors.email}</div>
             <br />
-            <label>New Password ↴&nbsp;&nbsp;</label>
+            <label>Password ↴&nbsp;&nbsp;</label>
             <br />
             <input
               type="password"

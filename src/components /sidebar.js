@@ -45,7 +45,7 @@ const Sidebar = () => {
         </li>
         <li>
           <div className="sidebar-item" onClick={() => handleDropdownToggle(1)}>
-            <span>Garden Decor</span>
+            <span>Garden</span>
             <ul className="dropdown-menu">
               <li>
                 <Link to="/decor/planters">Planters</Link>
@@ -79,7 +79,13 @@ const Sidebar = () => {
           <Link to="/seller">Be a Seller</Link>
         </li>
         <li>
+          <Link to="/sell">Sell</Link>
+        </li>
+        <li>
           <Link to="/store">Stores</Link>
+        </li>
+        <li>
+          <Link to="/review">Reviews</Link>
         </li>
       </ul>
     </div>
